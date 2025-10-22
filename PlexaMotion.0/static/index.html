@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlexaMotion.0 Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/reading_board.css">
+    <link rel="stylesheet" href="/fun_mode.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pptx-js@0.2.2/dist/pptx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <!-- Gesture Camera Feed -->
+    <div id="gesture-feed-container" style="display: none;">
+        <video id="gestureFeed" autoplay muted playsinline></video>
+        <div id="gesture-feed-label">🎥 Gesture View Active</div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-message" class="toast"></div>
+
+    <div class="main-container">
+        <header class="header">
+            <div id="logo-container">
+                <div class="logo-icon"></div>
+                <span class="logo-text">PlexaMotion.0</span>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <section class="card card-gesture">
+                <h2><i class="fas fa-hand-sparkles"></i> Gesture Control</h2>
+                <div class="card-toggle">
+                    <label for="gesture-toggle">Enable Mode</label>
+                    <label class="switch"><input type="checkbox" id="gesture-toggle"><span class="slider round"></span></label>
+                </div>
+                <div class="setting-item">
+                    <label><i class="fas fa-universal-access"></i> Input Mode</label>
+                    <div class="segmented-control">
+                        <button id="gesture-hand-btn" class="active"><i class="fas fa-hand-paper"></i> Hand</button>
+                        <button id="gesture-head-btn"><i class="fas fa-user-circle"></i> Head</button>
+                    </div>
+                </div>
+                <button id="toggle-camera-view-btn" class="action-btn"><i class="fas fa-camera"></i> Show/Hide Camera</button>
+                <button id="gesture-help-btn" class="action-btn"><i class="fas fa-question-circle"></i> How to use Gestures</button>
+
+                <div class="fun-mode-card">
+                    <div class="fun-mode-header">
+                        <h3><i class="fas fa-gamepad"></i> Fun Mode (Face Control Game)</h3>
+                        <button id="fun-mode-toggle" class="toggle-btn"><i class="fas fa-chevron-down"></i></button>
+                    </div>
+                    <div id="fun-mode-content" class="fun-mode-content" style="display: none;">
+                        <canvas id="fun-mode-canvas" width="400" height="250"></canvas>
+                        <div class="fun-mode-controls">
+                            <button id="fun-mode-start-btn" class="action-btn"><i class="fas fa-play"></i> Start Game</button>
+                        </div>
+                        <div class="how-to-play">
+                            <h4><i class="fas fa-info-circle"></i> How to Play</h4>
+                            <ul>
+                                <li><i class="fas fa-arrow-up"></i> <strong>Jump:</strong> Move your face upward.</li>
+                                <li><i class="fas fa-camera"></i> Keep your face visible in the webcam.</li>
+                                <li><i class="fas fa-skull-crossbones"></i> Avoid hitting the stones.</li>
+                                <li><i class="fas fa-trophy"></i> Survive as long as you can!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card card-voice">
+                <h2><i class="fas fa-comment-dots"></i> Vero Voice Control</h2>
+                <div class="card-toggle">
+                    <label for="voice-toggle">Enable Mode</label>
+                    <label class="switch"><input type="checkbox" id="voice-toggle"><span class="slider round"></span></label>
+                </div>
+                <div class="mic-container">
+                    <div class="mic-animation" id="mic-animation"><i class="fas fa-microphone-slash"></i></div>
+                    <div id="speech-feedback" class="speech-feedback">Vero is offline.</div>
+                </div>
+                <button id="vero-help-btn" class="action-btn"><i class="fas fa-question-circle"></i> How to use Vero</button>
+            </section>
+
+            <section class="card card-actions">
+                <h2><i class="fas fa-rocket"></i> Quick Actions</h2>
+                <div class="quick-actions-grid">
+                    <button class="quick-action-btn" data-action="browser" title="Open default browser"><i class="fas fa-globe"></i><span>Browser</span></button>
+                    <button class="quick-action-btn" data-action="music" title="Play Music"><i class="fas fa-music"></i><span>Music</span></button>
+                    <button class="quick-action-btn" data-action="vol_up" title="Volume Up"><i class="fas fa-volume-up"></i><span>Vol Up</span></button>
+                    <button class="quick-action-btn" data-action="vol_down" title="Volume Down"><i class="fas fa-volume-down"></i><span>Vol Down</span></button>
+                    <button class="quick-action-btn" data-action="close" title="Close Active Window"><i class="fas fa-times-circle"></i><span>Close</span></button>
+                    <button class="quick-action-btn" data-action="sleep" title="Sleep PC"><i class="fas fa-power-off"></i><span>Sleep</span></button>
+                    <button class="quick-action-btn" id="reading-mode-btn" title="Open Reading Mode"><i class="fas fa-book-reader"></i><span>Reading Mode</span></button>
+                </div>
+            </section>
+
+            <section class="card card-dashboard-console">
+                <div class="dashboard-header">
+                    <div class="system-status-grid">
+                        <div class="status-item" title="Webcam status"><i class="fas fa-camera"></i><span id="webcam-status" class="status-text red">OFF</span></div>
+                        <div class="status-item" title="Microphone status"><i class="fas fa-microphone"></i><span id="mic-status" class="status-text red">OFF</span></div>
+                        <div class="status-item" title="Current active mode"><i class="fas fa-brain"></i><span id="mode-status" class="status-text">HYBRID</span></div>
+                        <div class="status-item" title="Last recognized command"><i class="fas fa-history"></i><span>Last Cmd:</span><span id="last-command-status" class="status-text">None</span></div>
+                    </div>
+                </div>
+                <div class="console-header">
+                    <h2><i class="fas fa-terminal"></i> Console</h2>
+                    <button id="clear-logs-btn" class="control-btn" title="Clear all logs"><i class="fas fa-trash-alt"></i> Clear</button>
+                </div>
+                <div class="console-output" id="console-output"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <div id="vero-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="vero-modal-close">&times;</button>
+            <h2><i class="fas fa-comment-alt"></i> How to Use Vero</h2>
+            <p>Activate Vero by enabling Voice Mode. Speak clearly to issue commands.</p>
+            <h4>Command Examples:</h4>
+            <div class="command-list">
+                <ul>
+                    <li>"Open browser"</li>
+                    <li>"Play music"</li>
+                    <li>"Volume up" / "Volume down"</li>
+                    <li>"Close window"</li>
+                    <li>"Go to sleep"</li>
+                    <li>"Open WhatsApp"</li>
+                    <li>"Open Microsoft Store"</li>
+                    <li>"Open Explorer"</li>
+                    <li>"Open Hill Climb"</li>
+                    <li>"Open Edge"</li>
+                    <li>"Open Excel"</li>
+                    <li>"Open PowerPoint"</li>
+                    <li>"Open Photos"</li>
+                    <li>"Open Calculator"</li>
+                    <li>"Open Clock"</li>
+                </ul>
+            </div>
+            <h4>Tips:</h4>
+            <ul>
+                <li>If Vero stops listening, say "Hey Vero" to resume.</li>
+                <li>Ensure your microphone has permission in the browser.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="gesture-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="gesture-modal-close">&times;</button>
+            <h2><i class="fas fa-hand-sparkles"></i> How to Use Gestures</h2>
+            
+            <h4><i class="fas fa-user-circle"></i> Head Mode</h4>
+            <ul>
+                <li><strong>Move Cursor:</strong> Move your head.</li>
+                <li><strong>Left Click:</strong> Open your mouth.</li>
+            </ul>
+
+            <h4><i class="fas fa-hand-paper"></i> Hand Mode</h4>
+            <ul>
+                <li><strong>Move Cursor:</strong> Point with your index finger.</li>
+                <li><strong>Left Click:</strong> Pinch your thumb and index finger together.</li>
+                <li><strong>Right Click:</strong> Pinch your thumb and middle finger together.</li>
+                <li><em>More gestures like scrolling are coming soon!</em></li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- READING BOARD -->
+    <div id="reading-board-overlay" class="reading-board-overlay" style="display: none;">
+        <div id="reading-board" class="reading-board">
+            <div id="gesture-active-indicator" style="display: none;">🖐 Gesture Active</div>
+            <div class="reading-board-title">✨ Reading & Teaching Board Activated</div>
+            <button id="exit-reading-board-btn" class="exit-reading-board-btn">❌ Exit Board</button>
+            <canvas id="readingCanvas"></canvas>
+            <canvas id="laserCanvas"></canvas>
+            <input type="file" id="file-upload-input" style="display: none;" accept=".pdf,.ppt,.pptx,.png,.jpg,.jpeg">
+            <div id="pdf-viewer-container" style="display: none;">
+                <canvas id="pdf-canvas"></canvas>
+                <div id="pdf-nav">
+                    <button id="prev-page" class="toolbar-btn"><i class="fas fa-arrow-left"></i></button>
+                    <span id="page-num"></span> / <span id="page-count"></span>
+                    <button id="next-page" class="toolbar-btn"><i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <div class="reading-board-toolbar">
+                <button class="toolbar-btn active" data-tool="pen" title="Pen"><i class="fas fa-pencil-alt"></i></button>
+                <input type="color" id="color-picker" class="toolbar-btn" title="Color Picker" value="#000000">
+                <input type="range" id="cursor-size" class="toolbar-btn" min="1" max="50" value="5" title="Cursor Size">
+                <button class="toolbar-btn" data-tool="eraser" title="Eraser"><i class="fas fa-eraser"></i></button>
+                <button class="toolbar-btn" data-tool="highlighter" title="Highlighter"><i class="fas fa-highlighter"></i></button>
+                <button class="toolbar-btn" id="sticky-note-btn" title="Add Sticky Note"><i class="fas fa-sticky-note"></i></button>
+                <button class="toolbar-btn" data-tool="laser" title="Laser Pointer"><i class="fas fa-bullseye"></i></button>
+                <button class="toolbar-btn" id="clear-board-btn" title="Clear Board"><i class="fas fa-trash-alt"></i></button>
+                <button class="toolbar-btn" id="upload-file-btn" title="Upload File"><i class="fas fa-upload"></i></button>
+                <button class="toolbar-btn" id="gesture-draw-btn" title="Gesture Drawing"><i class="fas fa-hand-paper"></i></button>
+                <button class="toolbar-btn" id="save-board-btn" title="Save Board"><i class="fas fa-save"></i></button>
+                <button class="toolbar-btn" id="share-board-btn" title="Share Board"><i class="fas fa-share-alt"></i></button>
+                <button class="toolbar-btn" id="gallery-btn" title="My Gallery"><i class="fas fa-folder-open"></i></button>
+                <button class="toolbar-btn" id="how-to-use-btn" title="How to Use"><i class="fas fa-info-circle"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        &copy; 2025 VisionTouch | Powered by Vero & Gesture AI
+    </footer>
+
+    <script src="https://cdn.socket.io/4.5.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/vision_bundle.js"></script>
+    <script src="/script.js"></script>
+    <script src="/reading_board.js"></script>
+    <script src="/fun_mode.js"></script>
+    <!-- GALLERY -->
+    <div id="gallery-overlay" class="reading-board-overlay" style="display: none;">
+        <div id="gallery-modal" class="modal-content">
+            <button class="modal-close-btn" id="gallery-modal-close">&times;</button>
+            <h2><i class="fas fa-folder-open"></i> My Gallery</h2>
+            <div id="gallery-grid" class="gallery-grid"></div>
+        </div>
+    </div>
+
+    <!-- HOW TO USE MODAL -->
+    <div id="how-to-use-overlay" class="reading-board-overlay" style="display: none;">
+        <div id="how-to-use-modal" class="modal-content">
+            <button class="modal-close-btn" id="how-to-use-modal-close">&times;</button>
+            <h2><i class="fas fa-info-circle"></i> How to Use</h2>
+            <div class="how-to-use-content">
+                <h4>🖐 Gesture & Drawing</h4>
+                <ul>
+                    <li><strong>✋ Open Hand</strong> – Move cursor or pointer</li>
+                    <li><strong>☝ Index Finger Up</strong> – Draw/write on board</li>
+                    <li><strong>✌ Two Fingers</strong> – Erase</li>
+                    <li><strong>✊ Fist</strong> – Stop drawing</li>
+                    <li><strong>🖐 Full Palm</strong> – Clear board (with confirmation)</li>
+                </ul>
+                <h4>🖍 Tools</h4>
+                <ul>
+                    <li><strong>🎨 Color Picker</strong> – Choose writing color</li>
+                    <li><strong>📏 Cursor Size</strong> – Adjust brush width</li>
+                    <li><strong>🧼 Eraser</strong> – Remove small parts</li>
+                    <li><strong>🧹 Clear Board</strong> – Erase everything instantly</li>
+                </ul>
+                <h4>🗂 File Handling</h4>
+                <ul>
+                    <li><strong>📤 Upload PDF / PPT / Image</strong> – Import study material</li>
+                    <li><strong>📄 Page Navigation</strong> – Use ⬅ / ➡ to change pages</li>
+                    <li><strong>💾 Save & Share</strong> – Export board as image/PDF</li>
+                </ul>
+                <h4>🗣 Vero Voice Control</h4>
+                <ul>
+                    <li>Say “Hey Vero, open teaching mode” to activate</li>
+                    <li>Say “Vero, change color to blue” or “Vero, clear board”</li>
+                </ul>
+                <h4>💡 Tips</h4>
+                <ul>
+                    <li>Make sure camera access is allowed for gesture tracking.</li>
+                    <li>Works fully offline and free — no internet required.</li>
+                    <li>Supports mouse or touch drawing if webcam isn’t available.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

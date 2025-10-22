@@ -1,0 +1,8 @@
+opencv-python
+mediapipe
+SpeechRecognition
+PyAudio
+pyautogui
+pyttsx3
+Flask
+Flask-SocketIO

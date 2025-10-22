@@ -1,0 +1,256 @@
+/* Reading Board Styles */
+.reading-board-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.reading-board {
+    width: 95%;
+    height: 95%;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.reading-board.open {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.reading-board-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-display);
+    font-size: 2.5em;
+    color: var(--accent-primary);
+    text-shadow: 0 0 15px var(--glow-primary);
+    opacity: 0;
+    animation: float-in 1.5s ease-out forwards;
+}
+
+@keyframes float-in {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.exit-reading-board-btn, .modal-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1010;
+    transition: all 0.3s;
+}
+
+.exit-reading-board-btn:hover, .modal-close-btn:hover {
+    background-color: var(--status-red);
+    color: white;
+    border-color: var(--status-red);
+}
+
+#readingCanvas, #laserCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#readingCanvas {
+    z-index: 100;
+}
+
+#laserCanvas {
+    z-index: 101;
+    pointer-events: none;
+}
+
+.reading-board-toolbar {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    z-index: 1010;
+}
+
+.toolbar-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.toolbar-btn:hover, .toolbar-btn.active {
+    background-color: var(--accent-primary);
+    color: var(--card-bg-color);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 10px var(--glow-primary);
+}
+
+#pdf-viewer-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#pdf-canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#pdf-nav {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1010;
+    color: var(--text-primary);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.gallery-thumbnail {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.gallery-thumbnail:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px var(--glow-secondary);
+}
+
+.gallery-thumbnail img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.gallery-thumbnail p {
+    margin: 0;
+    padding: 10px;
+    background-color: var(--card-bg-color);
+    font-size: 0.9em;
+    text-align: center;
+}
+
+#gesture-active-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--status-green);
+    color: var(--card-bg-color);
+    padding: 10px 15px;
+    border-radius: 8px;
+    z-index: 1010;
+    font-weight: bold;
+    box-shadow: 0 0 10px var(--status-green);
+}
+
+.sticky-note {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background-color: #ffc;
+    padding: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    font-family: 'Caveat', cursive;
+    font-size: 1.2em;
+    cursor: move;
+    z-index: 1020;
+}
+
+.sticky-note-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+}
+
+.sticky-note-close {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+#how-to-use-modal .modal-content {
+    max-width: 600px;
+}
+
+.how-to-use-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.how-to-use-content h4 {
+    color: var(--accent-primary);
+    margin-top: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+.how-to-use-content ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.how-to-use-content li {
+    margin-bottom: 10px;
+}

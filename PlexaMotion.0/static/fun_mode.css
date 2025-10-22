@@ -1,0 +1,121 @@
+/* Fun Mode Card */
+.fun-mode-card {
+    background-color: #2a2a3e;
+    border-radius: 10px;
+    margin-top: 15px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.fun-mode-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.fun-mode-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #e0e0e0;
+}
+
+.fun-mode-header .toggle-btn {
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.fun-mode-header .toggle-btn.expanded {
+    transform: rotate(180deg);
+}
+
+.fun-mode-content {
+    margin-top: 10px;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+    position: relative;
+}
+
+.collision-flash {
+    animation: flash 0.5s ease;
+}
+
+@keyframes flash {
+    0% { background-color: red; }
+    100% { background-color: #1a1a2e; }
+}
+
+#fun-mode-canvas {
+    background-color: #1a1a2e;
+    border: 1px solid #4a4a6a;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+}
+
+.fun-mode-controls {
+    margin-top: 10px;
+}
+
+.how-to-play {
+    margin-top: 15px;
+    text-align: left;
+    color: #b0b0c0;
+    font-size: 0.9rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.how-to-play h4 {
+    margin-bottom: 5px;
+    color: #e0e0e0;
+}
+
+.how-to-play ul {
+    list-style: none;
+    padding: 0;
+}
+
+.how-to-play ul li {
+    margin-bottom: 5px;
+}
+
+.game-over-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.game-over-content {
+    background-color: #2a2a3e;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+}
+
+.game-over-content h3 {
+    margin-top: 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
